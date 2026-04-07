@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String   @id @default(cuid())
+  stravaId       String   @unique
+  accessToken    String
+  refreshToken   String
+  tokenExpiresAt Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  activities     Activity[]
+  dailyMetrics   DailyMetrics[]
+}
+
+model Activity {
+  id                   String   @id @default(cuid())
+  stravaId             BigInt   @unique
+  userId               String
+  name                 String
+  sportType            String
+  startDate            DateTime
+  movingTime           Int
+  elapsedTime          Int
+  distance             Float
+  totalElevationGain   Float
+  averageHeartrate     Float?
+  maxHeartrate         Float?
+  averageSpeed         Float
+  weightedAverageWatts Int?
+  sufferScore          Int?
+  tss                  Float
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user  User @relation(fields: [userId], references: [id])
+}
+
+model DailyMetrics {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime
+  totalTSS   Float
+  bikeTSS    Float
+  runTSS     Float
+  swimTSS    Float
+  otherTSS   Float
+  totalTime  Int
+  ctl        Float
+  atl        Float
+  tsb        Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user  User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}

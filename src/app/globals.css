@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-bg:      #0a0a0f;
+  --color-surface: #12121a;
+  --color-border:  #1e1e2e;
+
+  /* Text */
+  --color-text-primary: #e4e4e7;
+  --color-text-muted:   #71717a;
+
+  /* Training load accents */
+  --color-ctl:          #3b82f6; /* blue  — fitness */
+  --color-atl:          #f472b6; /* pink  — fatigue */
+  --color-tsb-fresh:    #22c55e; /* green — form/fresh */
+  --color-tsb-fatigued: #ef4444; /* red   — form/tired */
+
+  /* Sport accents */
+  --color-bike: #f59e0b; /* amber  */
+  --color-run:  #10b981; /* emerald */
+  --color-swim: #06b6d4; /* cyan   */
+  --color-gym:  #8b5cf6; /* violet */
+
+  /* Typography — populated by next/font CSS variables */
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* ── Global dark theme ─────────────────────────────────── */
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Numeric hero values use the monospace font */
+.font-numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
