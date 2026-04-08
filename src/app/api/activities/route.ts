@@ -24,8 +24,9 @@ export async function GET() {
     },
   });
 
+  type Row = (typeof activities)[number];
   return NextResponse.json(
-    activities.map((a: ActivityRow) => ({
+    activities.map((a: Row) => ({
       ...a,
       startDate: a.startDate.toISOString(),
     }))
