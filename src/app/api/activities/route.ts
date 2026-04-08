@@ -33,7 +33,7 @@ export async function GET() {
   });
 
   return NextResponse.json(
-    activities.map((a) => ({
+    activities.map((a: ActivityRow) => ({
       ...a,
       startDate: a.startDate.toISOString(),
     }))
