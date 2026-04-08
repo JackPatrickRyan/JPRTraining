@@ -65,6 +65,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  const idempotencyKey = `${event.object_id}:${event.aspect_type}:${event.event_time}`;
+
+  try {
+    await prisma.stravaWebhookLog.create({
+      data: { userId: user.id, idempotencyKey },
+    });
+  } catch (e: unknown) {
+    if ((e as { code?: string }).code === "P2002") {
+      return NextResponse.json({ ok: true }); // duplicate event
+    }
+    throw e;
+  }
+
   try {
     if (event.aspect_type === "create" || event.aspect_type === "update") {
       const accessToken = await getValidAccessToken(user.id);
