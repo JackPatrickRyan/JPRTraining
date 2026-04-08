@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import SyncButton from "@/components/SyncButton";
+import HeaderControls from "@/components/HeaderControls";
 
 const outfit = Outfit({
   subsets: ["latin"],
