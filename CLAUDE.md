@@ -38,6 +38,7 @@ Required in `.env.local`:
 | `STRAVA_CLIENT_ID` | Strava OAuth app client ID |
 | `STRAVA_CLIENT_SECRET` | Strava OAuth app client secret |
 | `STRAVA_WEBHOOK_VERIFY_TOKEN` | Arbitrary secret used to verify Strava webhook subscriptions |
+| `WIDGET_API_KEY` | Bearer token for the personal widget endpoint (`/api/widget`) |
 
 ## Architecture
 
