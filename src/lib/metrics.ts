@@ -232,7 +232,8 @@ export async function getMetricsSummary(
     orderBy: { date: "asc" },
   });
 
-  const dailyRows: DailyMetricRow[] = rows.map((r) => ({
+  type MetricsRow = (typeof rows)[number];
+  const dailyRows: DailyMetricRow[] = rows.map((r: MetricsRow) => ({
     date: r.date,
     ctl: r.ctl,
     atl: r.atl,
