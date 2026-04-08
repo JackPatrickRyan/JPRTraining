@@ -69,7 +69,8 @@ export async function POST(req: NextRequest) {
     if (event.aspect_type === "create" || event.aspect_type === "update") {
       const accessToken = await getValidAccessToken(user.id);
       const raw = await fetchActivity(accessToken, event.object_id);
-      await upsertActivity(user.id, raw);
+      const settings = await prisma.userSettings.findUnique({ where: { userId: user.id } }) ?? DEFAULT_SETTINGS;
+      await upsertActivity(user.id, raw, settings);
       await recalculateDailyMetrics(user.id, new Date(raw.start_date));
     }
 
