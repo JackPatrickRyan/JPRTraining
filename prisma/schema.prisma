@@ -77,3 +77,14 @@ model DailyMetrics {
 
   @@unique([userId, date])
 }
+
+model StravaWebhookLog {
+  id             String   @id @default(cuid())
+  userId         String
+  idempotencyKey String
+  processedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, idempotencyKey])
+}
