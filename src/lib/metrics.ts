@@ -168,6 +168,9 @@ export async function calculateDailyMetrics(
   let ctl = seedCTL;
   let atl = seedATL;
 
+  type DayRow = DayBuckets & { date: Date; ctl: number; atl: number; tsb: number };
+  const rows: DayRow[] = [];
+
   for (const date of dateRange(from, today)) {
     const key = date.toISOString();
     const buckets = byDate.get(key) ?? { ...EMPTY_BUCKETS };
@@ -176,12 +179,37 @@ export async function calculateDailyMetrics(
     atl = atl + (buckets.totalTSS - atl) / ATL_DAYS;
     const tsb = ctl - atl;
 
-    await prisma.dailyMetrics.upsert({
-      where: { userId_date: { userId, date } },
-      update: { ...buckets, ctl, atl, tsb },
-      create: { userId, date, ...buckets, ctl, atl, tsb },
-    });
+    rows.push({ date, ctl, atl, tsb, ...buckets });
   }
+
+  if (rows.length === 0) return;
+
+  // Single bulk upsert — one round-trip regardless of date range
+  const now = new Date().toISOString();
+  const values = rows
+    .map((r) => {
+      const id = crypto.randomUUID();
+      const date = r.date.toISOString();
+      return `('${id}','${userId}','${date}',${r.totalTSS},${r.bikeTSS},${r.runTSS},${r.swimTSS},${r.otherTSS},${r.totalTime},${r.ctl},${r.atl},${r.tsb},'${now}','${now}')`;
+    })
+    .join(",");
+
+  await prisma.$executeRawUnsafe(`
+    INSERT INTO "DailyMetrics"
+      (id,"userId",date,"totalTSS","bikeTSS","runTSS","swimTSS","otherTSS","totalTime",ctl,atl,tsb,"createdAt","updatedAt")
+    VALUES ${values}
+    ON CONFLICT ("userId",date) DO UPDATE SET
+      "totalTSS"  = EXCLUDED."totalTSS",
+      "bikeTSS"   = EXCLUDED."bikeTSS",
+      "runTSS"    = EXCLUDED."runTSS",
+      "swimTSS"   = EXCLUDED."swimTSS",
+      "otherTSS"  = EXCLUDED."otherTSS",
+      "totalTime" = EXCLUDED."totalTime",
+      ctl         = EXCLUDED.ctl,
+      atl         = EXCLUDED.atl,
+      tsb         = EXCLUDED.tsb,
+      "updatedAt" = EXCLUDED."updatedAt"
+  `);
 }
 
 // ─── Query helpers ────────────────────────────────────────────────────────────
