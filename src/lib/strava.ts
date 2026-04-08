@@ -256,7 +256,7 @@ export async function syncActivities(userId: string): Promise<SyncSummary> {
   let updatedActivities = 0;
 
   for (const raw of stravaActivities) {
-    await upsertActivity(userId, raw);
+    await upsertActivity(userId, raw, settings);
 
     if (existingIds.has(String(raw.id))) {
       updatedActivities++;
