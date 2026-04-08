@@ -36,7 +36,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ "hub.challenge": challenge });
   }
 
-  return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  return NextResponse.json({
+    error: "Forbidden",
+    received: { mode, challenge, verifyToken },
+    expected: process.env.STRAVA_WEBHOOK_VERIFY_TOKEN,
+  }, { status: 403 });
 }
 
 // ─── POST — incoming activity events ─────────────────────────────────────────
