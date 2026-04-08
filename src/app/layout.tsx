@@ -36,6 +36,7 @@ export default function RootLayout({
           <HeaderControls />
         </header>
         <main className="flex-1 min-h-0 overflow-y-auto">{children}</main>
+        <div id="modal-root" />
       </body>
     </html>
   );
