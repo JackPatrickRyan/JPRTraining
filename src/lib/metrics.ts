@@ -272,8 +272,9 @@ export async function getWeeklySummary(
     orderBy: { date: "asc" },
   });
 
+  type MetricsRow = (typeof rows)[number];
   return aggregateWeeks(
-    rows.map((r) => ({
+    rows.map((r: MetricsRow) => ({
       date: r.date,
       ctl: r.ctl,
       atl: r.atl,
