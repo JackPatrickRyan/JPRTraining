@@ -39,9 +39,10 @@ export async function POST(request: Request) {
   });
 
   if (activities.length > 0) {
+    type ActivityRow = (typeof activities)[number];
     // Compute TSS in JS, then bulk-update in a single SQL statement
     const values = activities
-      .map((act) => {
+      .map((act: ActivityRow) => {
         const tss = calculateTSS(
           {
             sportType: act.sportType,
