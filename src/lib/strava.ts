@@ -180,7 +180,8 @@ export async function fetchActivity(
  */
 export async function upsertActivity(
   userId: string,
-  raw: StravaActivity
+  raw: StravaActivity,
+  settings: UserSettings = DEFAULT_SETTINGS
 ): Promise<void> {
   const tss = calculateTSS({
     sportType: raw.sport_type,
