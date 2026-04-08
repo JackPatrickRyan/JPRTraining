@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { calculateTSS } from "@/lib/tss";
+import { calculateTSS, DEFAULT_SETTINGS, type UserSettings } from "@/lib/tss";
 import { calculateDailyMetrics } from "@/lib/metrics";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
