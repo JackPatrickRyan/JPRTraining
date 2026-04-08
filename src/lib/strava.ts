@@ -191,7 +191,7 @@ export async function upsertActivity(
     averageSpeed: raw.average_speed,
     averageHeartrate: raw.average_heartrate,
     weightedAverageWatts: raw.weighted_average_watts,
-  });
+  }, settings);
   const data = {
     userId,
     name: raw.name,
