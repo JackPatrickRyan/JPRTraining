@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@prisma/adapter-neon": "^7.7.0",
     "@prisma/client": "^7.6.0",
     "date-fns": "^4.1.0",
     "next": "16.2.2",
