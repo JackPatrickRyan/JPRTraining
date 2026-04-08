@@ -27,6 +27,7 @@ export default function SyncButton() {
       const res = await fetch('/api/sync', { method: 'POST' })
       if (!res.ok) throw new Error()
       setState('done')
+      window.dispatchEvent(new Event('sync-complete'))
       setTimeout(() => setState('idle'), 3000)
     } catch {
       setState('error')
