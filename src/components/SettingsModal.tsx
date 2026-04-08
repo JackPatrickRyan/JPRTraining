@@ -10,22 +10,19 @@ type Settings = {
   maxHR: number;
 };
 
-function secsToMMSS(secs: number): string {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
-
-function mmssToSecs(str: string): number | null {
-  const match = str.trim().match(/^(\d+):([0-5]\d)$/);
-  if (!match) return null;
-  return parseInt(match[1]) * 60 + parseInt(match[2]);
+function secsToMMSS(secs: number): { m: string; s: string } {
+  return {
+    m: String(Math.floor(secs / 60)),
+    s: String(secs % 60).padStart(2, "0"),
+  };
 }
 
 export default function SettingsModal({ onClose }: { onClose: () => void }) {
   const [ftp, setFtp] = useState("");
-  const [runPace, setRunPace] = useState("");
-  const [swimCSSStr, setSwimCSSStr] = useState("");
+  const [runM, setRunM] = useState("");
+  const [runS, setRunS] = useState("");
+  const [swimM, setSwimM] = useState("");
+  const [swimS, setSwimS] = useState("");
   const [restingHR, setRestingHR] = useState("");
   const [maxHR, setMaxHR] = useState("");
   const [saving, setSaving] = useState(false);
@@ -36,8 +33,10 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
       .then((r) => r.json())
       .then((s: Settings) => {
         setFtp(String(s.cycleFTP));
-        setRunPace(secsToMMSS(s.runThresholdPace));
-        setSwimCSSStr(secsToMMSS(s.swimCSS));
+        const run = secsToMMSS(s.runThresholdPace);
+        setRunM(run.m); setRunS(run.s);
+        const swim = secsToMMSS(s.swimCSS);
+        setSwimM(swim.m); setSwimS(swim.s);
         setRestingHR(String(s.restingHR));
         setMaxHR(String(s.maxHR));
       })
@@ -45,17 +44,16 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
   }, []);
 
   async function handleSave() {
-    const runSecs = mmssToSecs(runPace);
-    const swimSecs = mmssToSecs(swimCSSStr);
-
-    if (!runSecs) { setError("Run pace must be mm:ss (e.g. 4:30)"); return; }
-    if (!swimSecs) { setError("Swim CSS must be mm:ss (e.g. 1:35)"); return; }
-
     const ftpVal = parseInt(ftp);
+    const runSecs = parseInt(runM) * 60 + parseInt(runS);
+    const swimSecs = parseInt(swimM) * 60 + parseInt(swimS);
     const restVal = parseInt(restingHR);
     const maxVal = parseInt(maxHR);
 
     if (isNaN(ftpVal) || ftpVal <= 0) { setError("FTP must be a positive number"); return; }
+    if (isNaN(runSecs) || runSecs <= 0) { setError("Run threshold pace is invalid"); return; }
+    if (isNaN(swimSecs) || swimSecs <= 0) { setError("Swim CSS is invalid"); return; }
+    if (parseInt(runS) > 59 || parseInt(swimS) > 59) { setError("Seconds must be 0–59"); return; }
     if (isNaN(restVal) || restVal <= 0) { setError("Resting HR must be a positive number"); return; }
     if (isNaN(maxVal) || maxVal <= 0) { setError("Max HR must be a positive number"); return; }
 
@@ -76,6 +74,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
       });
 
       if (res.ok) {
+        window.dispatchEvent(new Event("settings-saved"));
         onClose();
       } else {
         const body = await res.json().catch(() => ({}));
@@ -94,20 +93,13 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="bg-bg border border-border rounded-lg w-full max-w-sm flex flex-col max-h-[90vh]">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-3 shrink-0">
           <h2 className="font-mono text-xs tracking-[0.2em] uppercase text-text-muted">
             Threshold Settings
           </h2>
-          <button
-            onClick={onClose}
-            className="text-text-muted hover:text-text-primary text-xl leading-none"
-          >
-            ×
-          </button>
+          <button onClick={onClose} className="text-text-muted hover:text-text-primary text-xl leading-none">×</button>
         </div>
 
-        {/* Scrollable body */}
         <div className="overflow-y-auto px-6 pb-2 space-y-3">
           <Field label="Bike FTP" unit="watts">
             <input
@@ -118,24 +110,12 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          <Field label="Run Threshold Pace" unit="mm:ss /km">
-            <input
-              type="text"
-              value={runPace}
-              onChange={(e) => setRunPace(e.target.value)}
-              placeholder="4:30"
-              className="w-full bg-transparent border border-border rounded px-3 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-ctl"
-            />
+          <Field label="Run Threshold Pace" unit="/km">
+            <PaceInput m={runM} s={runS} onChangeM={setRunM} onChangeS={setRunS} />
           </Field>
 
-          <Field label="Swim CSS" unit="mm:ss /100m">
-            <input
-              type="text"
-              value={swimCSSStr}
-              onChange={(e) => setSwimCSSStr(e.target.value)}
-              placeholder="1:35"
-              className="w-full bg-transparent border border-border rounded px-3 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-ctl"
-            />
+          <Field label="Swim CSS" unit="/100m">
+            <PaceInput m={swimM} s={swimS} onChangeM={setSwimM} onChangeS={setSwimS} />
           </Field>
 
           <Field label="Resting HR" unit="bpm">
@@ -156,12 +136,9 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          {error && (
-            <p className="text-xs font-mono text-atl">{error}</p>
-          )}
+          {error && <p className="text-xs font-mono text-atl">{error}</p>}
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end gap-2 px-6 py-4 shrink-0 border-t border-border mt-2">
           <button
             onClick={onClose}
@@ -182,14 +159,42 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-function Field({
-  label,
-  unit,
-  children,
+function PaceInput({
+  m, s, onChangeM, onChangeS,
 }: {
-  label: string;
-  unit: string;
-  children: React.ReactNode;
+  m: string; s: string;
+  onChangeM: (v: string) => void;
+  onChangeS: (v: string) => void;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      <input
+        type="number"
+        value={m}
+        onChange={(e) => onChangeM(e.target.value)}
+        placeholder="4"
+        min="0"
+        className="w-16 bg-transparent border border-border rounded px-3 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-ctl text-center"
+      />
+      <span className="text-text-muted font-mono text-sm">:</span>
+      <input
+        type="number"
+        value={s}
+        onChange={(e) => onChangeS(e.target.value)}
+        placeholder="30"
+        min="0"
+        max="59"
+        className="w-16 bg-transparent border border-border rounded px-3 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-ctl text-center"
+      />
+      <span className="text-[10px] font-mono text-text-muted opacity-60 ml-1">min : sec</span>
+    </div>
+  );
+}
+
+function Field({
+  label, unit, children,
+}: {
+  label: string; unit: string; children: React.ReactNode;
 }) {
   return (
     <div className="space-y-1">
