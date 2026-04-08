@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Settings = {
   cycleFTP: number;
@@ -18,6 +18,7 @@ function secsToMMSS(secs: number): { m: string; s: string } {
 }
 
 export default function SettingsModal({ onClose }: { onClose: () => void }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [ftp, setFtp] = useState("");
   const [runM, setRunM] = useState("");
   const [runS, setRunS] = useState("");
@@ -27,6 +28,10 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
   const [maxHR, setMaxHR] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    dialogRef.current?.showModal();
+  }, []);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -75,6 +80,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
 
       if (res.ok) {
         window.dispatchEvent(new Event("settings-saved"));
+        dialogRef.current?.close();
         onClose();
       } else {
         const body = await res.json().catch(() => ({}));
@@ -88,16 +94,26 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div
-      className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center bg-black/60 px-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(e) => { if (e.target === e.currentTarget) { dialogRef.current?.close(); onClose(); } }}
+      className="bg-transparent p-0 m-0 w-screen h-screen max-w-none max-h-none flex items-center justify-center backdrop:bg-black/60"
     >
-      <div className="bg-bg border border-border rounded-lg w-full max-w-sm flex flex-col max-h-[90vh]">
+      <div
+        className="bg-bg border border-border rounded-lg w-full max-w-sm flex flex-col max-h-[90vh] mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between px-6 pt-5 pb-3 shrink-0">
           <h2 className="font-mono text-xs tracking-[0.2em] uppercase text-text-muted">
             Threshold Settings
           </h2>
-          <button onClick={onClose} className="text-text-muted hover:text-text-primary text-xl leading-none">×</button>
+          <button
+            onClick={() => { dialogRef.current?.close(); onClose(); }}
+            className="text-text-muted hover:text-text-primary text-xl leading-none"
+          >
+            ×
+          </button>
         </div>
 
         <div className="overflow-y-auto px-6 pb-2 space-y-3">
@@ -141,7 +157,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
 
         <div className="flex justify-end gap-2 px-6 py-4 shrink-0 border-t border-border mt-2">
           <button
-            onClick={onClose}
+            onClick={() => { dialogRef.current?.close(); onClose(); }}
             className="px-3 py-1.5 text-xs font-mono tracking-wider border border-border rounded text-text-muted hover:text-text-primary transition-colors"
           >
             Cancel
@@ -155,13 +171,11 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 
-function PaceInput({
-  m, s, onChangeM, onChangeS,
-}: {
+function PaceInput({ m, s, onChangeM, onChangeS }: {
   m: string; s: string;
   onChangeM: (v: string) => void;
   onChangeS: (v: string) => void;
@@ -169,21 +183,14 @@ function PaceInput({
   return (
     <div className="flex items-center gap-1">
       <input
-        type="number"
-        value={m}
-        onChange={(e) => onChangeM(e.target.value)}
-        placeholder="4"
-        min="0"
+        type="number" value={m} onChange={(e) => onChangeM(e.target.value)}
+        placeholder="4" min="0"
         className="w-16 bg-transparent border border-border rounded px-3 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-ctl text-center"
       />
       <span className="text-text-muted font-mono text-sm">:</span>
       <input
-        type="number"
-        value={s}
-        onChange={(e) => onChangeS(e.target.value)}
-        placeholder="30"
-        min="0"
-        max="59"
+        type="number" value={s} onChange={(e) => onChangeS(e.target.value)}
+        placeholder="30" min="0" max="59"
         className="w-16 bg-transparent border border-border rounded px-3 py-1.5 text-sm font-mono text-text-primary focus:outline-none focus:border-ctl text-center"
       />
       <span className="text-[10px] font-mono text-text-muted opacity-60 ml-1">min : sec</span>
@@ -191,9 +198,7 @@ function PaceInput({
   );
 }
 
-function Field({
-  label, unit, children,
-}: {
+function Field({ label, unit, children }: {
   label: string; unit: string; children: React.ReactNode;
 }) {
   return (
