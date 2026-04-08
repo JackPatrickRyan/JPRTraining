@@ -6,6 +6,7 @@ import {
   upsertActivity,
   recalculateDailyMetrics,
 } from "@/lib/strava";
+import { DEFAULT_SETTINGS } from "@/lib/tss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
