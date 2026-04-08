@@ -79,17 +79,25 @@ widget.addSpacer(8)
 
 // ── Footer: week TSS · week time ─────────────────────────────────────────────
 
-let footer = widget.addText(`${data.weekTSS} TSS · ${data.weekTime}`)
+let footerStack = widget.addStack()
+footerStack.layoutHorizontally()
+footerStack.addSpacer()
+let footer = footerStack.addText(`${data.weekTSS} TSS · ${data.weekTime}`)
 footer.font = Font.systemFont(10)
 footer.textColor = new Color("#52525b")
 footer.minimumScaleFactor = 0.7
+footerStack.addSpacer()
 
 if (data.lastSync) {
   widget.addSpacer(2)
+  let syncStack = widget.addStack()
+  syncStack.layoutHorizontally()
+  syncStack.addSpacer()
   let d = new Date(data.lastSync)
-  let synced = widget.addText(`↑ ${d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`)
+  let synced = syncStack.addText(`↑ ${d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`)
   synced.font = Font.systemFont(9)
   synced.textColor = new Color("#3f3f46")
+  syncStack.addSpacer()
 }
 
 Script.setWidget(widget)
