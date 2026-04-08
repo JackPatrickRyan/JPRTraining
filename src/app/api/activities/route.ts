@@ -2,14 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
-
-type ActivityRow = Prisma.ActivityGetPayload<{
-  select: {
-    id: true; name: true; sportType: true; startDate: true;
-    movingTime: true; distance: true; tss: true;
-  };
-}>;
 
 export async function GET() {
   const session = await getServerSession(authOptions);
