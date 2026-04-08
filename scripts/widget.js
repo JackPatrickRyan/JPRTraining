@@ -43,9 +43,14 @@ if (data.error) {
 
 // ── Metrics row: CTL ◦ ATL ◦ TSB ────────────────────────────────────────────
 
-let row = widget.addStack()
+let rowWrapper = widget.addStack()
+rowWrapper.layoutHorizontally()
+rowWrapper.addSpacer()
+
+let row = rowWrapper.addStack()
 row.layoutHorizontally()
 row.centerAlignContent()
+rowWrapper.addSpacer()
 
 function addNumber(stack, value, color) {
   let t = stack.addText(String(Math.round(value)))
