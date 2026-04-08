@@ -227,6 +227,9 @@ export async function upsertActivity(
 export async function syncActivities(userId: string): Promise<SyncSummary> {
   const accessToken = await getValidAccessToken(userId);
 
+  const dbSettings = await prisma.userSettings.findUnique({ where: { userId } });
+  const settings: UserSettings = dbSettings ?? DEFAULT_SETTINGS;
+
   // Find the most recent activity we already have
   const latest = await prisma.activity.findFirst({
     where: { userId },
