@@ -16,6 +16,16 @@ npx prisma generate      # regenerate client after schema changes
 
 No test runner is configured. There is no lint script in package.json.
 
+## Git workflow
+
+After making file changes, always commit and push to git:
+
+```bash
+git add <changed files>
+git commit -m "description"
+git push
+```
+
 ## Environment variables
 
 Required in `.env.local`:
