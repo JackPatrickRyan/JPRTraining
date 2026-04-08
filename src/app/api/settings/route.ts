@@ -39,29 +39,32 @@ export async function POST(request: Request) {
   });
 
   if (activities.length > 0) {
-    // Compute TSS in JS, then bulk-update in one SQL statement
-    const rows = activities.map((act) => {
-      const tss = calculateTSS(
-        {
-          sportType: act.sportType,
-          movingTime: act.movingTime,
-          distance: act.distance,
-          totalElevationGain: act.totalElevationGain,
-          averageSpeed: act.averageSpeed,
-          averageHeartrate: act.averageHeartrate,
-          weightedAverageWatts: act.weightedAverageWatts,
-        },
-        settings
-      );
-      return Prisma.sql`(${act.id}, ${tss}::float8)`;
-    });
+    // Compute TSS in JS, then bulk-update in a single SQL statement
+    const values = activities
+      .map((act) => {
+        const tss = calculateTSS(
+          {
+            sportType: act.sportType,
+            movingTime: act.movingTime,
+            distance: act.distance,
+            totalElevationGain: act.totalElevationGain,
+            averageSpeed: act.averageSpeed,
+            averageHeartrate: act.averageHeartrate,
+            weightedAverageWatts: act.weightedAverageWatts,
+          },
+          settings
+        );
+        // act.id is a cuid (alphanumeric + hyphens), tss is a JS number — safe to inline
+        return `('${act.id}', ${tss})`;
+      })
+      .join(", ");
 
-    await prisma.$executeRaw`
+    await prisma.$executeRawUnsafe(`
       UPDATE "Activity" AS a
-      SET tss = v.tss
-      FROM (VALUES ${Prisma.join(rows)}) AS v(id text, tss float8)
+      SET tss = v.tss::float8
+      FROM (VALUES ${values}) AS v(id, tss)
       WHERE a.id = v.id
-    `;
+    `);
 
     await calculateDailyMetrics(session.user.id);
   }
