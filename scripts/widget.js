@@ -16,27 +16,9 @@ function tsbColor(tsb) {
   return new Color("#ef4444")
 }
 
-function addMetricRow(widget, label, value, color) {
-  let stack = widget.addStack()
-  stack.layoutHorizontally()
-  stack.centerAlignContent()
-
-  let lbl = stack.addText(label)
-  lbl.font = Font.semiboldSystemFont(10)
-  lbl.textColor = new Color("#71717a")
-  lbl.minimumScaleFactor = 0.8
-
-  stack.addSpacer(4)
-
-  let val = stack.addText(value)
-  val.font = new Font("Menlo-Bold", 18)
-  val.textColor = color
-  val.minimumScaleFactor = 0.8
-}
-
 let widget = new ListWidget()
 widget.backgroundColor = new Color("#0a0a0f")
-widget.setPadding(10, 12, 10, 12)
+widget.setPadding(12, 14, 12, 14)
 
 let data
 try {
@@ -59,19 +41,38 @@ if (data.error) {
   return
 }
 
-let title = widget.addText("Training Load")
-title.font = Font.boldSystemFont(11)
-title.textColor = new Color("#71717a")
+// ── Metrics row: CTL ◦ ATL ◦ TSB ────────────────────────────────────────────
 
-widget.addSpacer(6)
+let row = widget.addStack()
+row.layoutHorizontally()
+row.centerAlignContent()
 
-addMetricRow(widget, "CTL", String(data.ctl), new Color("#3b82f6"))
-widget.addSpacer(2)
-addMetricRow(widget, "ATL", String(data.atl), new Color("#a855f7"))
-widget.addSpacer(2)
-addMetricRow(widget, "TSB", (data.tsb > 0 ? "+" : "") + String(data.tsb), tsbColor(data.tsb))
+function addNumber(stack, value, color) {
+  let t = stack.addText(String(Math.round(value)))
+  t.font = new Font("Menlo-Bold", 26)
+  t.textColor = color
+  t.minimumScaleFactor = 0.7
+}
 
-widget.addSpacer(6)
+function addDot(stack) {
+  let d = stack.addText("◦")
+  d.font = Font.systemFont(14)
+  d.textColor = new Color("#3f3f46")
+}
+
+addNumber(row, data.ctl, new Color("#3b82f6"))
+row.addSpacer(6)
+addDot(row)
+row.addSpacer(6)
+addNumber(row, data.atl, new Color("#f472b6"))
+row.addSpacer(6)
+addDot(row)
+row.addSpacer(6)
+addNumber(row, data.tsb, tsbColor(data.tsb))
+
+widget.addSpacer(8)
+
+// ── Footer: week TSS · week time ─────────────────────────────────────────────
 
 let footer = widget.addText(`${data.weekTSS} TSS · ${data.weekTime}`)
 footer.font = Font.systemFont(10)
