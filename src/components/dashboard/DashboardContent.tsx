@@ -51,7 +51,7 @@ export default function DashboardContent() {
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [activities, setActivities] = useState<ActivityRow[] | null>(null);
 
-  useEffect(() => {
+  function fetchData() {
     fetch("/api/metrics?days=84")
       .then((r) => r.json())
       .then(setMetrics)
@@ -61,6 +61,16 @@ export default function DashboardContent() {
       .then((r) => r.json())
       .then(setActivities)
       .catch(console.error);
+  }
+
+  useEffect(() => {
+    fetchData();
+    window.addEventListener("settings-saved", fetchData);
+    window.addEventListener("sync-complete", fetchData);
+    return () => {
+      window.removeEventListener("settings-saved", fetchData);
+      window.removeEventListener("sync-complete", fetchData);
+    };
   }, []);
 
   if (!metrics) {
