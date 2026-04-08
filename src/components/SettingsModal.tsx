@@ -90,7 +90,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
 
   const modal = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+      className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="bg-bg border border-border rounded-lg w-full max-w-sm flex flex-col max-h-[90vh]">
