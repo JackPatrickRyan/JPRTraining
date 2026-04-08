@@ -87,7 +87,7 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
     }
   }
 
-  const modal = (
+  return (
     <div
       className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
