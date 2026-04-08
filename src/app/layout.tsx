@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import HeaderControls from "@/components/HeaderControls";
+import ClientLayout from "@/components/ClientLayout";
 
 const outfit = Outfit({
   subsets: ["latin"],
