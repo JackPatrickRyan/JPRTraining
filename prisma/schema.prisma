@@ -18,6 +18,7 @@ model User {
   activities     Activity[]
   dailyMetrics   DailyMetrics[]
   settings       UserSettings?
+  webhookLogs    StravaWebhookLog[]
 }
 
 model UserSettings {
