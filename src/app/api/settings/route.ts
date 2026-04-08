@@ -40,27 +40,29 @@ export async function POST(request: Request) {
   });
 
   if (activities.length > 0) {
-    await prisma.$transaction(
-      activities.map((act) =>
-        prisma.activity.update({
-          where: { id: act.id },
-          data: {
-            tss: calculateTSS(
-              {
-                sportType: act.sportType,
-                movingTime: act.movingTime,
-                distance: act.distance,
-                totalElevationGain: act.totalElevationGain,
-                averageSpeed: act.averageSpeed,
-                averageHeartrate: act.averageHeartrate,
-                weightedAverageWatts: act.weightedAverageWatts,
-              },
-              settings
-            ),
-          },
-        })
-      )
-    );
+    // Compute TSS in JS, then bulk-update in one SQL statement
+    const rows = activities.map((act) => {
+      const tss = calculateTSS(
+        {
+          sportType: act.sportType,
+          movingTime: act.movingTime,
+          distance: act.distance,
+          totalElevationGain: act.totalElevationGain,
+          averageSpeed: act.averageSpeed,
+          averageHeartrate: act.averageHeartrate,
+          weightedAverageWatts: act.weightedAverageWatts,
+        },
+        settings
+      );
+      return Prisma.sql`(${act.id}, ${tss}::float8)`;
+    });
+
+    await prisma.$executeRaw`
+      UPDATE "Activity" AS a
+      SET tss = v.tss
+      FROM (VALUES ${Prisma.join(rows)}) AS v(id text, tss float8)
+      WHERE a.id = v.id
+    `;
 
     await calculateDailyMetrics(session.user.id);
   }
