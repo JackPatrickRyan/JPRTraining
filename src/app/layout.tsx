@@ -33,7 +33,7 @@ export default function RootLayout({
           <span className="font-mono text-[10px] tracking-[0.2em] text-text-muted uppercase">
             JPR Training
           </span>
-          <SyncButton />
+          <HeaderControls />
         </header>
         <main className="flex-1 min-h-0 overflow-y-auto">{children}</main>
       </body>
