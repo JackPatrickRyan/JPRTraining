@@ -158,6 +158,8 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }
 
 function PaceInput({
