@@ -37,7 +37,13 @@ function fmtHours(seconds: number) {
 
 type View = "tss" | "time";
 
-type ChartRow = WeekRow & { totalHours: number };
+type ChartRow = WeekRow & {
+  totalHours: number;
+  swimHours: number;
+  bikeHours: number;
+  runHours: number;
+  otherHours: number;
+};
 
 const tooltipStyle = {
   backgroundColor: "#12121a",
