@@ -42,6 +42,13 @@ export async function GET(req: NextRequest) {
     (w) => w.weekStart.getTime() === monday.getTime()
   );
 
+  let daysToRace: number | null = null;
+  if (settings?.nextRaceDate) {
+    const today = toUTCMidnight(new Date());
+    const race = toUTCMidnight(settings.nextRaceDate);
+    daysToRace = Math.round((race.getTime() - today.getTime()) / 86400000);
+  }
+
   return NextResponse.json({
     ctl: metrics.current ? Math.round(metrics.current.ctl * 10) / 10 : 0,
     atl: metrics.current ? Math.round(metrics.current.atl * 10) / 10 : 0,
@@ -49,5 +56,7 @@ export async function GET(req: NextRequest) {
     weekTSS: Math.round(currentWeek?.totalTSS ?? 0),
     weekTime: formatTime(currentWeek?.totalTime ?? 0),
     lastSync: lastActivity?.startDate.toISOString() ?? null,
+    raceName: settings?.nextRaceName ?? null,
+    daysToRace,
   });
 }
