@@ -132,6 +132,12 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               )}
             />
             <Bar
+              dataKey="swimTSS"
+              name="swim"
+              stackId="a"
+              fill={SPORT_COLORS.swim}
+            />
+            <Bar
               dataKey="bikeTSS"
               name="bike"
               stackId="a"
@@ -142,12 +148,6 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               name="run"
               stackId="a"
               fill={SPORT_COLORS.run}
-            />
-            <Bar
-              dataKey="swimTSS"
-              name="swim"
-              stackId="a"
-              fill={SPORT_COLORS.swim}
             />
             <Bar
               dataKey="otherTSS"
