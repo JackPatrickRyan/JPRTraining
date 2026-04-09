@@ -204,13 +204,13 @@ export async function calculateDailyMetrics(
     .map((r) => {
       const id = crypto.randomUUID();
       const date = r.date.toISOString();
-      return `('${id}','${userId}','${date}',${r.totalTSS},${r.bikeTSS},${r.runTSS},${r.swimTSS},${r.otherTSS},${r.totalTime},${r.ctl},${r.atl},${r.tsb},'${now}','${now}')`;
+      return `('${id}','${userId}','${date}',${r.totalTSS},${r.bikeTSS},${r.runTSS},${r.swimTSS},${r.otherTSS},${r.totalTime},${r.bikeTime},${r.runTime},${r.swimTime},${r.otherTime},${r.ctl},${r.atl},${r.tsb},'${now}','${now}')`;
     })
     .join(",");
 
   await prisma.$executeRawUnsafe(`
     INSERT INTO "DailyMetrics"
-      (id,"userId",date,"totalTSS","bikeTSS","runTSS","swimTSS","otherTSS","totalTime",ctl,atl,tsb,"createdAt","updatedAt")
+      (id,"userId",date,"totalTSS","bikeTSS","runTSS","swimTSS","otherTSS","totalTime","bikeTime","runTime","swimTime","otherTime",ctl,atl,tsb,"createdAt","updatedAt")
     VALUES ${values}
     ON CONFLICT ("userId",date) DO UPDATE SET
       "totalTSS"  = EXCLUDED."totalTSS",
@@ -219,6 +219,10 @@ export async function calculateDailyMetrics(
       "swimTSS"   = EXCLUDED."swimTSS",
       "otherTSS"  = EXCLUDED."otherTSS",
       "totalTime" = EXCLUDED."totalTime",
+      "bikeTime"  = EXCLUDED."bikeTime",
+      "runTime"   = EXCLUDED."runTime",
+      "swimTime"  = EXCLUDED."swimTime",
+      "otherTime" = EXCLUDED."otherTime",
       ctl         = EXCLUDED.ctl,
       atl         = EXCLUDED.atl,
       tsb         = EXCLUDED.tsb,
