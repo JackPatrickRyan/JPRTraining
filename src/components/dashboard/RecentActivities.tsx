@@ -1,14 +1,7 @@
 "use client";
 
-import { getSportCategory } from "@/lib/tss";
+import { getSportCategory, SPORT_COLORS } from "@/lib/tss";
 import type { ActivityRow } from "./DashboardContent";
-
-const SPORT_COLORS: Record<string, string> = {
-  bike: "#f59e0b",
-  run: "#10b981",
-  swim: "#06b6d4",
-  other: "#8b5cf6",
-};
 
 function fmtDate(iso: string) {
   const d = new Date(iso);
