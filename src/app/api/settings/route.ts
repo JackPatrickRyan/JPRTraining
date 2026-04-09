@@ -25,12 +25,17 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { cycleFTP, runThresholdPace, swimCSS, restingHR, maxHR } = body;
+  const { cycleFTP, runThresholdPace, swimCSS, restingHR, maxHR, nextRaceName, nextRaceDate } = body;
+
+  const raceFields = {
+    nextRaceName: nextRaceName ?? null,
+    nextRaceDate: nextRaceDate ? new Date(nextRaceDate) : null,
+  };
 
   const settings: UserSettings = await prisma.userSettings.upsert({
     where: { userId: session.user.id },
-    update: { cycleFTP, runThresholdPace, swimCSS, restingHR, maxHR },
-    create: { userId: session.user.id, cycleFTP, runThresholdPace, swimCSS, restingHR, maxHR },
+    update: { cycleFTP, runThresholdPace, swimCSS, restingHR, maxHR, ...raceFields },
+    create: { userId: session.user.id, cycleFTP, runThresholdPace, swimCSS, restingHR, maxHR, ...raceFields },
   });
 
   // Recalculate TSS for all activities in one transaction
