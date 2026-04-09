@@ -144,6 +144,10 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
   const chartData: ChartRow[] = weeks.slice(-12).map((w) => ({
     ...w,
     totalHours: w.totalTime / 3600,
+    swimHours: w.swimTime / 3600,
+    bikeHours: w.bikeTime / 3600,
+    runHours: w.runTime / 3600,
+    otherHours: w.otherTime / 3600,
   }));
 
   return (
