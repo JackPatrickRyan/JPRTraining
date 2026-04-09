@@ -48,9 +48,15 @@ type MetricsResponse = {
   weeks: WeekRow[];
 };
 
+type RaceSettings = {
+  nextRaceName: string | null;
+  nextRaceDate: string | null;
+};
+
 export default function DashboardContent() {
   const [metrics, setMetrics] = useState<MetricsResponse | null>(null);
   const [activities, setActivities] = useState<ActivityRow[] | null>(null);
+  const [race, setRace] = useState<RaceSettings>({ nextRaceName: null, nextRaceDate: null });
 
   function fetchData() {
     fetch("/api/metrics?days=84")
@@ -61,6 +67,13 @@ export default function DashboardContent() {
     fetch("/api/activities")
       .then((r) => r.json())
       .then(setActivities)
+      .catch(console.error);
+  }
+
+  function fetchRace() {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((s) => setRace({ nextRaceName: s.nextRaceName ?? null, nextRaceDate: s.nextRaceDate ?? null }))
       .catch(console.error);
   }
 
