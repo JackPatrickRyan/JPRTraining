@@ -21,6 +21,9 @@ const SPORT_COLORS = {
   other: "#9ca3af",
 };
 
+const SPORT_ORDER = ["swim", "bike", "run", "other"] as const;
+type Sport = (typeof SPORT_ORDER)[number];
+
 function fmtWeek(iso: string) {
   const d = new Date(iso);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
@@ -34,12 +37,15 @@ function fmtHours(seconds: number) {
 
 type View = "tss" | "time";
 
+type ChartRow = WeekRow & { totalHours: number };
+
 const tooltipStyle = {
   backgroundColor: "#12121a",
   border: "1px solid #1e1e2e",
   borderRadius: 8,
   fontSize: 12,
   fontFamily: "var(--font-mono)",
+  padding: "10px 14px",
 };
 
 const axisTickStyle = {
@@ -54,10 +60,71 @@ const labelStyle = {
   fontFamily: "var(--font-mono)",
 } as const;
 
+function TSSTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: ChartRow }>;
+  label?: string;
+}) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0].payload;
+  return (
+    <div style={tooltipStyle}>
+      <p style={{ color: "#71717a", marginBottom: 8, fontSize: 11 }}>
+        {fmtWeek(String(label))}
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {SPORT_ORDER.map((sport: Sport) => {
+          const val = Math.round(Number(row[`${sport}TSS` as keyof ChartRow]));
+          return (
+            <div key={sport} style={{ display: "flex", alignItems: "center", gap: 0 }}>
+              <span style={{ color: SPORT_COLORS[sport], minWidth: 44, fontSize: 11 }}>
+                {sport.toUpperCase()}
+              </span>
+              <span style={{ color: "#4b5563", marginRight: 8 }}>:</span>
+              <span style={{ color: "#e4e4e7", minWidth: 32, textAlign: "right", fontSize: 11 }}>
+                {val}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function TimeTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: ChartRow }>;
+  label?: string;
+}) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0].payload;
+  return (
+    <div style={tooltipStyle}>
+      <p style={{ color: "#71717a", marginBottom: 8, fontSize: 11 }}>
+        {fmtWeek(String(label))}
+      </p>
+      <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+        <span style={{ color: "#9ca3af", minWidth: 44, fontSize: 11 }}>TOTAL</span>
+        <span style={{ color: "#4b5563", marginRight: 8 }}>:</span>
+        <span style={{ color: "#e4e4e7", fontSize: 11 }}>{fmtHours(row.totalTime)}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
   const [view, setView] = useState<View>("tss");
 
-  const chartData = weeks.slice(-12).map((w) => ({
+  const chartData: ChartRow[] = weeks.slice(-12).map((w) => ({
     ...w,
     totalHours: w.totalTime / 3600,
   }));
@@ -109,16 +176,7 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               tickLine={false}
               width={36}
             />
-            <Tooltip
-              contentStyle={tooltipStyle}
-              labelStyle={{ color: "#71717a", marginBottom: 4 }}
-              itemStyle={{ color: "#e4e4e7" }}
-              labelFormatter={(label) => fmtWeek(String(label))}
-              formatter={(v, name) => [
-                Math.round(Number(v)),
-                String(name).toUpperCase(),
-              ]}
-            />
+            <Tooltip content={<TSSTooltip />} />
             <Legend
               wrapperStyle={{
                 fontSize: 10,
@@ -127,7 +185,7 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               }}
               content={() => (
                 <div style={{ display: "flex", gap: 16, justifyContent: "center", fontFamily: "var(--font-mono)", fontSize: 10 }}>
-                  {(["swim", "bike", "run", "other"] as const).map((sport) => (
+                  {SPORT_ORDER.map((sport) => (
                     <span key={sport} style={{ display: "flex", alignItems: "center", gap: 5 }}>
                       <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: SPORT_COLORS[sport] }} />
                       <span style={{ color: "#71717a" }}>{sport.toUpperCase()}</span>
@@ -136,24 +194,9 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
                 </div>
               )}
             />
-            <Bar
-              dataKey="swimTSS"
-              name="swim"
-              stackId="a"
-              fill={SPORT_COLORS.swim}
-            />
-            <Bar
-              dataKey="bikeTSS"
-              name="bike"
-              stackId="a"
-              fill={SPORT_COLORS.bike}
-            />
-            <Bar
-              dataKey="runTSS"
-              name="run"
-              stackId="a"
-              fill={SPORT_COLORS.run}
-            />
+            <Bar dataKey="swimTSS" name="swim" stackId="a" fill={SPORT_COLORS.swim} />
+            <Bar dataKey="bikeTSS" name="bike" stackId="a" fill={SPORT_COLORS.bike} />
+            <Bar dataKey="runTSS" name="run" stackId="a" fill={SPORT_COLORS.run} />
             <Bar
               dataKey="otherTSS"
               name="other"
@@ -196,13 +239,7 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               width={36}
               tickFormatter={(v: number) => `${v.toFixed(0)}h`}
             />
-            <Tooltip
-              contentStyle={tooltipStyle}
-              labelStyle={{ color: "#71717a", marginBottom: 4 }}
-              itemStyle={{ color: "#e4e4e7" }}
-              labelFormatter={(label) => fmtWeek(String(label))}
-              formatter={(v) => [fmtHours(Number(v) * 3600), "Time"]}
-            />
+            <Tooltip content={<TimeTooltip />} />
             <Bar
               dataKey="totalHours"
               name="time"
