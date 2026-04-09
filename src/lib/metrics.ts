@@ -262,6 +262,10 @@ export async function getMetricsSummary(
     swimTSS: r.swimTSS,
     otherTSS: r.otherTSS,
     totalTime: r.totalTime,
+    bikeTime: r.bikeTime,
+    runTime: r.runTime,
+    swimTime: r.swimTime,
+    otherTime: r.otherTime,
   }));
 
   const latest = rows.at(-1);
