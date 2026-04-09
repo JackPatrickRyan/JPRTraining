@@ -15,10 +15,10 @@ import {
 import type { WeekRow } from "./DashboardContent";
 
 const SPORT_COLORS = {
-  bike: "#f59e0b",
-  run: "#10b981",
-  swim: "#06b6d4",
-  other: "#8b5cf6",
+  swim: "#2563eb",
+  bike: "#16a34a",
+  run: "#dc2626",
+  other: "#9ca3af",
 };
 
 function fmtWeek(iso: string) {
