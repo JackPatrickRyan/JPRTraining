@@ -31,6 +31,10 @@ export type WeekRow = {
   swimTSS: number;
   otherTSS: number;
   totalTime: number;
+  bikeTime: number;
+  runTime: number;
+  swimTime: number;
+  otherTime: number;
 };
 
 export type ActivityRow = {
