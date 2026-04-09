@@ -79,6 +79,7 @@ export default function DashboardContent() {
 
   useEffect(() => {
     fetchData();
+    fetchRace();
     window.addEventListener("settings-saved", fetchData);
     window.addEventListener("sync-complete", fetchData);
     return () => {
