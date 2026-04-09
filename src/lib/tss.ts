@@ -32,6 +32,13 @@ const BIKE_TYPES = new Set([
 const RUN_TYPES = new Set(["Run", "VirtualRun", "TrailRun", "Treadmill"]);
 const SWIM_TYPES = new Set(["Swim", "OpenWaterSwim"]);
 
+export const SPORT_COLORS: Record<SportCategory, string> = {
+  swim: "#38bdf8",  // sky-400
+  bike: "#4ade80",  // green-400
+  run:  "#f87171",  // red-400
+  other: "#94a3b8", // slate-400
+};
+
 export function getSportCategory(sportType: string): SportCategory {
   if (BIKE_TYPES.has(sportType)) return "bike";
   if (RUN_TYPES.has(sportType)) return "run";
