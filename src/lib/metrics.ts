@@ -54,10 +54,15 @@ interface DayBuckets {
   swimTSS: number;
   otherTSS: number;
   totalTime: number;
+  bikeTime: number;
+  runTime: number;
+  swimTime: number;
+  otherTime: number;
 }
 
 const EMPTY_BUCKETS: DayBuckets = {
-  totalTSS: 0, bikeTSS: 0, runTSS: 0, swimTSS: 0, otherTSS: 0, totalTime: 0,
+  totalTSS: 0, bikeTSS: 0, runTSS: 0, swimTSS: 0, otherTSS: 0,
+  totalTime: 0, bikeTime: 0, runTime: 0, swimTime: 0, otherTime: 0,
 };
 
 // ─── Public return types ──────────────────────────────────────────────────────
