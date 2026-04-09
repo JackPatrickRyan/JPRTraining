@@ -125,10 +125,15 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
                 fontFamily: "var(--font-mono)",
                 paddingTop: 8,
               }}
-              formatter={(v) => (
-                <span style={{ color: "#71717a" }}>
-                  {String(v).toUpperCase()}
-                </span>
+              content={() => (
+                <div style={{ display: "flex", gap: 16, justifyContent: "center", fontFamily: "var(--font-mono)", fontSize: 10 }}>
+                  {(["swim", "bike", "run", "other"] as const).map((sport) => (
+                    <span key={sport} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: SPORT_COLORS[sport] }} />
+                      <span style={{ color: "#71717a" }}>{sport.toUpperCase()}</span>
+                    </span>
+                  ))}
+                </div>
               )}
             />
             <Bar
