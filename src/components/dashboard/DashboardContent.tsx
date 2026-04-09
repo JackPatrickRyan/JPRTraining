@@ -99,6 +99,11 @@ export default function DashboardContent() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-6 space-y-4">
       <HeroMetrics current={metrics.current} days={metrics.days} />
+      <NextRaceCard
+        nextRaceName={race.nextRaceName}
+        nextRaceDate={race.nextRaceDate}
+        onSaved={fetchRace}
+      />
       <FitnessChart days={metrics.days} />
       <WeeklyChart weeks={metrics.weeks} />
       <RecentActivities activities={activities ?? []} />
