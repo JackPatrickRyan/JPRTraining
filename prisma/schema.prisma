@@ -70,6 +70,10 @@ model DailyMetrics {
   swimTSS    Float
   otherTSS   Float
   totalTime  Int
+  bikeTime   Int      @default(0)
+  runTime    Int      @default(0)
+  swimTime   Int      @default(0)
+  otherTime  Int      @default(0)
   ctl        Float
   atl        Float
   tsb        Float
