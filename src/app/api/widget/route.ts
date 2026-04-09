@@ -24,12 +24,16 @@ export async function GET(req: NextRequest) {
   const user = await prisma.user.findFirst({ select: { id: true } });
   if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const [metrics, lastActivity] = await Promise.all([
+  const [metrics, lastActivity, settings] = await Promise.all([
     getMetricsSummary(user.id, 14),
     prisma.activity.findFirst({
       where: { userId: user.id },
       orderBy: { startDate: "desc" },
       select: { startDate: true },
+    }),
+    prisma.userSettings.findUnique({
+      where: { userId: user.id },
+      select: { nextRaceName: true, nextRaceDate: true },
     }),
   ]);
 
