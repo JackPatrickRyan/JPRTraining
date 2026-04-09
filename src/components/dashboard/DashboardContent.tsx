@@ -5,6 +5,7 @@ import HeroMetrics from "./HeroMetrics";
 import FitnessChart from "./FitnessChart";
 import WeeklyChart from "./WeeklyChart";
 import RecentActivities from "./RecentActivities";
+import NextRaceCard from "./NextRaceCard";
 
 export type DayRow = {
   date: string;
