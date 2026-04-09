@@ -89,7 +89,7 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
         {view === "tss" ? (
           <BarChart
             data={chartData}
-            margin={{ top: 16, right: 4, bottom: 0, left: -8 }}
+            margin={{ top: 16, right: 4, bottom: 0, left: 4 }}
           >
             <CartesianGrid
               stroke="#1e1e2e"
@@ -107,7 +107,7 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               tick={axisTickStyle}
               axisLine={false}
               tickLine={false}
-              width={32}
+              width={36}
             />
             <Tooltip
               contentStyle={tooltipStyle}
