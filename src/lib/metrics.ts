@@ -336,6 +336,10 @@ function aggregateWeeks(days: DailyMetricRow[]): WeeklySummaryRow[] {
         swimTSS: 0,
         otherTSS: 0,
         totalTime: 0,
+        bikeTime: 0,
+        runTime: 0,
+        swimTime: 0,
+        otherTime: 0,
       });
     }
 
@@ -346,6 +350,10 @@ function aggregateWeeks(days: DailyMetricRow[]): WeeklySummaryRow[] {
     w.swimTSS += day.swimTSS;
     w.otherTSS += day.otherTSS;
     w.totalTime += day.totalTime;
+    w.bikeTime += day.bikeTime;
+    w.runTime += day.runTime;
+    w.swimTime += day.swimTime;
+    w.otherTime += day.otherTime;
   }
 
   return Array.from(weekMap.values()).sort(
