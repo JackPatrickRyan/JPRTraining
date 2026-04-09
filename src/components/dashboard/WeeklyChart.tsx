@@ -261,13 +261,23 @@ export default function WeeklyChart({ weeks }: { weeks: WeekRow[] }) {
               tickFormatter={(v: number) => `${v.toFixed(0)}h`}
             />
             <Tooltip content={<TimeTooltip />} />
-            <Bar
-              dataKey="totalHours"
-              name="time"
-              fill="#3b82f6"
-              fillOpacity={0.7}
-              radius={[3, 3, 0, 0]}
-            >
+            <Legend
+              wrapperStyle={{ fontSize: 10, fontFamily: "var(--font-mono)", paddingTop: 8 }}
+              content={() => (
+                <div style={{ display: "flex", gap: 16, justifyContent: "center", fontFamily: "var(--font-mono)", fontSize: 10 }}>
+                  {SPORT_ORDER.map((sport) => (
+                    <span key={sport} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: SPORT_COLORS[sport] }} />
+                      <span style={{ color: "#71717a" }}>{sport.toUpperCase()}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            />
+            <Bar dataKey="swimHours" name="swim" stackId="a" fill={SPORT_COLORS.swim} />
+            <Bar dataKey="bikeHours" name="bike" stackId="a" fill={SPORT_COLORS.bike} />
+            <Bar dataKey="runHours" name="run" stackId="a" fill={SPORT_COLORS.run} />
+            <Bar dataKey="otherHours" name="other" stackId="a" fill={SPORT_COLORS.other} radius={[3, 3, 0, 0]}>
               <LabelList
                 dataKey="totalHours"
                 position="top"
