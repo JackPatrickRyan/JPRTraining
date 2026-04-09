@@ -175,6 +175,7 @@ export async function calculateDailyMetrics(
     bucket.totalTSS += act.tss;
     bucket[`${cat}TSS`] += act.tss;
     bucket.totalTime += act.movingTime;
+    bucket[`${cat}Time`] += act.movingTime;
   }
 
   // ── Walk every calendar day, carry CTL/ATL forward ───────────────────────
