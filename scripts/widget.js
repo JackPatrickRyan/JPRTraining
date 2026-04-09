@@ -41,7 +41,7 @@ if (data.error) {
   return
 }
 
-// ── Metrics row: CTL ◦ ATL ◦ TSB ────────────────────────────────────────────
+// ── Hero row: CTL ◦ ATL ◦ TSB ───────────────────────────────────────────────
 
 let rowWrapper = widget.addStack()
 rowWrapper.layoutHorizontally()
@@ -77,16 +77,33 @@ addNumber(row, data.tsb, tsbColor(data.tsb))
 
 widget.addSpacer(8)
 
-// ── Footer: week TSS · week time ─────────────────────────────────────────────
+// ── Weekly stats: TSS + time ─────────────────────────────────────────────────
 
-let footerStack = widget.addStack()
-footerStack.layoutHorizontally()
-footerStack.addSpacer()
-let footer = footerStack.addText(`${data.weekTSS} TSS · ${data.weekTime}`)
-footer.font = Font.systemFont(10)
-footer.textColor = new Color("#52525b")
-footer.minimumScaleFactor = 0.7
-footerStack.addSpacer()
+let weekStack = widget.addStack()
+weekStack.layoutHorizontally()
+weekStack.addSpacer()
+let weekText = weekStack.addText(`${data.weekTSS} TSS · ${data.weekTime}`)
+weekText.font = Font.systemFont(10)
+weekText.textColor = new Color("#52525b")
+weekText.minimumScaleFactor = 0.7
+weekStack.addSpacer()
+
+// ── Race info ────────────────────────────────────────────────────────────────
+
+if (data.daysToRace !== null && data.daysToRace !== undefined) {
+  widget.addSpacer(2)
+  let raceStack = widget.addStack()
+  raceStack.layoutHorizontally()
+  raceStack.addSpacer()
+  const raceName = data.raceName || "Race"
+  let raceText = raceStack.addText(`${raceName} · ${data.daysToRace} days`)
+  raceText.font = Font.systemFont(10)
+  raceText.textColor = new Color("#52525b")
+  raceText.minimumScaleFactor = 0.7
+  raceStack.addSpacer()
+}
+
+// ── Last sync ────────────────────────────────────────────────────────────────
 
 if (data.lastSync) {
   widget.addSpacer(2)
