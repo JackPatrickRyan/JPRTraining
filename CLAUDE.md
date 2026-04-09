@@ -95,6 +95,16 @@ Schema and datasource URL are configured via `prisma.config.ts` (uses `dotenv/co
 | `/api/settings` | GET/POST | Read/update `UserSettings` |
 | `/api/webhook/strava` | GET/POST | Strava webhook (GET = challenge verification, POST = events) |
 
+### Scriptable widget (`scripts/widget.js`)
+
+This is an iOS Scriptable widget. It must visually mirror the web dashboard at all times. When making any changes to `scripts/widget.js`:
+
+- **Colours** — always source from the design tokens in `src/app/globals.css`. Never hardcode a colour that isn't already defined there.
+- **TSB colour logic** — `tsb >= 0` → `#22c55e` (fresh), `tsb < 0` → `#ef4444` (tired). Matches `HeroMetrics.tsx`.
+- **Race days colour** — `≤14` → `#f472b6` (pink), `≤42` → `#f59e0b` (amber), `>42` → `#3b82f6` (blue). Matches `NextRaceCard.tsx`.
+- **Card structure** — each metric lives in a surface-coloured (`#12121a`) rounded stack, with a small mono uppercase label top-left and a muted sublabel top-right. Mirrors `bg-surface border border-border rounded-xl` cards on the dashboard.
+- **Typography** — `Menlo-Bold` for labels, `Menlo-Regular` for values (closest iOS equivalent to JetBrains Mono).
+
 ### Strava webhook
 
 The webhook route at `/api/webhook/strava` handles real-time activity `create`, `update`, and `delete` events. Strava verifies the subscription endpoint with a `hub.verify_token` challenge (GET). After any activity change, `recalculateDailyMetrics` is called from the affected date forward to keep CTL/ATL correct.
