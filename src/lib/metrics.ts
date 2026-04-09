@@ -78,6 +78,10 @@ export interface DailyMetricRow {
   swimTSS: number;
   otherTSS: number;
   totalTime: number;
+  bikeTime: number;
+  runTime: number;
+  swimTime: number;
+  otherTime: number;
 }
 
 export interface WeeklySummaryRow {
@@ -90,6 +94,10 @@ export interface WeeklySummaryRow {
   swimTSS: number;
   otherTSS: number;
   totalTime: number;
+  bikeTime: number;
+  runTime: number;
+  swimTime: number;
+  otherTime: number;
 }
 
 export interface MetricsSummary {
