@@ -112,10 +112,21 @@ function TimeTooltip({
       <p style={{ color: "#71717a", marginBottom: 8, fontSize: 11 }}>
         {fmtWeek(String(label))}
       </p>
-      <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
-        <span style={{ color: "#9ca3af", minWidth: 44, fontSize: 11 }}>TOTAL</span>
-        <span style={{ color: "#4b5563", marginRight: 8 }}>:</span>
-        <span style={{ color: "#e4e4e7", fontSize: 11 }}>{fmtHours(row.totalTime)}</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {SPORT_ORDER.map((sport: Sport) => {
+          const secs = Number(row[`${sport}Time` as keyof ChartRow]);
+          return (
+            <div key={sport} style={{ display: "flex", alignItems: "center", gap: 0 }}>
+              <span style={{ color: SPORT_COLORS[sport], minWidth: 44, fontSize: 11 }}>
+                {sport.toUpperCase()}
+              </span>
+              <span style={{ color: "#4b5563", marginRight: 8 }}>:</span>
+              <span style={{ color: "#e4e4e7", minWidth: 40, textAlign: "right", fontSize: 11 }}>
+                {secs > 0 ? fmtHours(secs) : "—"}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
