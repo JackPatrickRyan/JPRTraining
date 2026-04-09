@@ -12,14 +12,8 @@ import {
   LabelList,
   ResponsiveContainer,
 } from "recharts";
+import { SPORT_COLORS } from "@/lib/tss";
 import type { WeekRow } from "./DashboardContent";
-
-const SPORT_COLORS = {
-  swim: "#2563eb",
-  bike: "#16a34a",
-  run: "#dc2626",
-  other: "#9ca3af",
-};
 
 const SPORT_ORDER = ["swim", "bike", "run", "other"] as const;
 type Sport = (typeof SPORT_ORDER)[number];
